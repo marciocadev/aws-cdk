@@ -147,11 +147,11 @@ describe('IAM policy document', () => {
     const stack = new Stack();
     const perm = new PolicyStatement();
     perm.addResources('MyResource');
-    perm.addActions('Action1', 'Action2', 'Action3');
+    perm.addActions('test:Action1', 'test:Action2', 'test:Action3');
 
     expect(stack.resolve(perm.toStatementJson())).toEqual({
       Effect: 'Allow',
-      Action: ['Action1', 'Action2', 'Action3'],
+      Action: ['test:Action1', 'test:Action2', 'test:Action3'],
       Resource: 'MyResource',
     });
   });
@@ -325,12 +325,12 @@ describe('IAM policy document', () => {
     const stack = new Stack();
 
     const statement = new PolicyStatement();
-    statement.addActions(...Lazy.list({ produce: () => ['a', 'b', 'c'] }));
+    statement.addActions(...Lazy.list({ produce: () => ['test:Action1', 'test:Action2', 'test:Action3'] }));
     statement.addResources(...Lazy.list({ produce: () => ['x', 'y', 'z'] }));
 
     expect(stack.resolve(statement.toStatementJson())).toEqual({
       Effect: 'Allow',
-      Action: ['a', 'b', 'c'],
+      Action: ['test:Action1', 'test:Action2', 'test:Action3'],
       Resource: ['x', 'y', 'z'],
     });
   });
@@ -339,15 +339,15 @@ describe('IAM policy document', () => {
     const stack = new Stack();
 
     const statement = new PolicyStatement();
-    statement.addActions('a');
-    statement.addActions('a');
+    statement.addActions('test:Action');
+    statement.addActions('test:Action');
 
     statement.addResources('x');
     statement.addResources('x');
 
     expect(stack.resolve(statement.toStatementJson())).toEqual({
       Effect: 'Allow',
-      Action: 'a',
+      Action: 'test:Action',
       Resource: 'x',
     });
   });
@@ -356,15 +356,15 @@ describe('IAM policy document', () => {
     const stack = new Stack();
 
     const statement = new PolicyStatement();
-    statement.addNotActions('a');
-    statement.addNotActions('a');
+    statement.addNotActions('test:NotAction');
+    statement.addNotActions('test:NotAction');
 
     statement.addNotResources('x');
     statement.addNotResources('x');
 
     expect(stack.resolve(statement.toStatementJson())).toEqual({
       Effect: 'Allow',
-      NotAction: 'a',
+      NotAction: 'test:NotAction',
       NotResource: 'x',
     });
   });
@@ -421,10 +421,10 @@ describe('IAM policy document', () => {
     s.addArnPrincipal('349494949494');
     s.addServicePrincipal('test.service');
     s.addResources('resource');
-    s.addActions('action');
+    s.addActions('test:Action');
 
     expect(stack.resolve(s.toStatementJson())).toEqual({
-      Action: 'action',
+      Action: 'test:Action',
       Effect: 'Allow',
       Principal: { AWS: '349494949494', Service: 'test.service' },
       Resource: 'resource',
@@ -723,7 +723,7 @@ describe('IAM policy document', () => {
 
       const statement = new PolicyStatement();
       statement.addResources('resource1', 'resource2');
-      statement.addActions('action1', 'action2');
+      statement.addActions('test:Action1', 'test:Action2');
       statement.addServicePrincipal('service');
       statement.addConditions({
         a: {

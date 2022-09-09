@@ -204,6 +204,32 @@ describe('IAM policy statement', () => {
     });
   });
 
+  test('throw error when action invalid is used', () => {
+    expect(() => new PolicyStatement({
+      resources: ['*'],
+      actions: ['Action'],
+    })).toThrow(/Action 'Action' is invalid. An action string consists of a service namespace, a colon, and the name of an action. Action names can include wildcards./);
+  });
+
+  test('throw error when not action invalid is used', () => {
+    expect(() => new PolicyStatement({
+      resources: ['*'],
+      notActions: ['Action'],
+    })).toThrow(/Action 'Action' is invalid. An action string consists of a service namespace, a colon, and the name of an action. Action names can include wildcards./);
+  });
+
+  test('throw error when add a action invalid', () => {
+    const statement = new PolicyStatement({ resources: ['*'] });
+    expect(() => statement.addActions('NotAction'))
+      .toThrow(/Action 'NotAction' is invalid. An action string consists of a service namespace, a colon, and the name of an action. Action names can include wildcards./);
+  });
+
+  test('throw error when add a action invalid', () => {
+    const statement = new PolicyStatement({ resources: ['*'] });
+    expect(() => statement.addNotActions('NotAction'))
+      .toThrow(/Action 'NotAction' is invalid. An action string consists of a service namespace, a colon, and the name of an action. Action names can include wildcards./);
+  });
+
   test('throws error when group is specified for \'Principal\' or \'NotPrincipal\'', () => {
     const stack = new Stack();
     const group = new Group(stack, 'groupId');
